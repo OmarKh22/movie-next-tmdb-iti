@@ -7,24 +7,51 @@ import Link from 'next/link';
 export default function Home() {
   const [movies, setMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const imageBase = 'https://image.tmdb.org/t/p/w500';
 
   useEffect(() => {
     const fetchTrendingMovies = async () => {
       try {
-        const res = await axios.get(
-          'https://api.themoviedb.org/3/trending/movie/day?api_key=271646b1495e3e27c91db4814e3a7193'
-        );
+        setLoading(true);
+        const res = await axios.get('/api/movies?endpoint=/trending/movie/day');
         setMovies(res.data.results);
+        setError(null);
       } catch (error) {
         console.error('API error:', error);
+        setError('Failed to load movies. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchTrendingMovies();
   }, []);
 
-  if (movies.length === 0) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-xl text-gray-600">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-xl text-red-600">{error}</div>
+      </div>
+    );
+  }
+
+  if (movies.length === 0) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-xl text-gray-600">No movies found</div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -40,6 +67,9 @@ export default function Home() {
                   src={imageBase + movie.poster_path}
                   alt={movie.title}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = '/no-image.png';
+                  }}
                 />
               </div>
               <div className="p-2 text-center">
