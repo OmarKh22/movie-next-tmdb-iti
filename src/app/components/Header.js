@@ -23,11 +23,14 @@ export default function Header() {
 
   return (
     <header className="bg-[#FFE353] shadow-md py-3 px-6 flex justify-between items-center">
+      {/* Logo */}
       <Link href="/" className="text-2xl font-bold text-black">
         MovieApp
       </Link>
 
+      {/* Icons */}
       <div className="flex items-center gap-4">
+        {/* Language Dropdown */}
         <div className="relative">
           <input type="checkbox" id="lang-toggle" className="peer hidden" />
           <label
@@ -37,6 +40,7 @@ export default function Header() {
             EN{" "}
             <HiChevronDown className="text-lg transition-transform peer-checked:rotate-180" />
           </label>
+
           <div className="absolute right-0 mt-2 hidden peer-checked:block bg-white border shadow-md rounded w-24 z-10">
             <button className="block w-full text-left px-3 py-2 hover:bg-yellow-100">
               EN
@@ -47,6 +51,7 @@ export default function Header() {
           </div>
         </div>
 
+        {/* Wishlist Icon with count */}
         <Link href="/wishlist" className="flex items-center gap-2 relative">
           <div className="relative">
             <IoHeartSharp className="text-3xl text-[#292d32]" />

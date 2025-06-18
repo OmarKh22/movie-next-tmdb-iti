@@ -1,23 +1,32 @@
+"use client";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import MovieCard from "./components/MovieCard";
+import Pagination from "./components/pagination";
 
-async function getNowPlaying() {
-  const res = await axios.get(
-    `https://api.themoviedb.org/3/movie/now_playing`,
-    {
-      params: {
-        api_key: process.env.NEXT_PUBLIC_TMDB_API_KEY,
-        language: "en-US",
-        page: 1,
-      },
-    }
-  );
-
-  return res.data.results;
+async function getNowPlaying(page = 1) {
+  const res = await axios.get(`/api/now-playing?page=${page}`);
+  return res.data;
 }
 
-export default async function HomePage() {
-  const movies = await getNowPlaying();
+export default function HomePage() {
+  const [movies, setMovies] = useState([]);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [totalPageNumber, setTotalPageNumber] = useState(0);
+
+  useEffect(() => {
+    async function fetchMovies() {
+      try {
+        const moviesData = await getNowPlaying(pageNumber);
+        setMovies(moviesData.results);
+        setTotalPageNumber(moviesData.total_pages);
+      } catch (error) {
+        console.error("Failed to fetch movies:", error);
+      }
+    }
+
+    fetchMovies();
+  }, [pageNumber]);
 
   return (
     <div className="px-6 py-4">
@@ -44,11 +53,17 @@ export default async function HomePage() {
 
       <h1 className="text-3xl font-bold mb-6">Now Playing</h1>
 
-      <div className="grid grid-cols-4 md:grid-cols-6 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {movies.map((movie) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
       </div>
+
+      <Pagination
+        totalPageNumber={totalPageNumber}
+        pageNumber={pageNumber}
+        setPageNumber={setPageNumber}
+      />
     </div>
   );
 }
