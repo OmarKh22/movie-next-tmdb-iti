@@ -3,7 +3,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import MovieCard from "./components/MovieCard";
-import Pagination from "./components/pagination";
+import Pagination from "./components/Pagination";
 import SearchBox from "./Components/SearchBox"; // من فرع search
 
 // Fetch movies with pagination
